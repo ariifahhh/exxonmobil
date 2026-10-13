@@ -19,6 +19,7 @@ This team project performs reservoir history matching to select 10 production fo
 | `PERSON1_TODO.md` | Person 1 data-engineering checklist. |
 | `PERSON2_TODO.md` | Person 2 history-match review checklist. |
 | `PERSON3_TODO.md` | Person 3 forecast benchmark checklist. |
+| `PERSON4_TODO.md` | Person 4 export, QA, dashboard, and presentation checklist. |
 | `HANDOVER_TO_PERSON2.md` | Verified outputs, limitations, and handover notes. |
 
 ## Quick start (Windows PowerShell)
@@ -49,6 +50,8 @@ The full pipeline reads the original Excel workbooks and creates clean tables, a
 - `outputs/top_history_matches.png`
 - `outputs/forecast_backtest_comparison.png`
 - `outputs/baseline_forecast_ensemble.png`
+
+The current export is `outputs/person4_delivery/Template Deliverable - provisional forecast.xlsx`. It is excluded from Git with all generated outputs, and must be replaced only after the team approves the shortlist and forecast assumptions.
 
 Open `notebooks/dataworks_workflow.ipynb` in VS Code/Jupyter, select the `.venv` kernel, and use **Run All** to run the entire workflow. This is the team's single notebook for Stages 1–3.
 

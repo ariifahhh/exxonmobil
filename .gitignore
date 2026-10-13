@@ -1,5 +1,6 @@
 # Python environment and tooling
 .venv/
+.artifact_tmp/
 __pycache__/
 *.py[cod]
 .pytest_cache/
