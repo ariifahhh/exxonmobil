@@ -1,0 +1,19 @@
+# Python environment and tooling
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Generated data and deliverables
+TestCases/
+DataWorks 2026 - Kick Off.pptx
+data/processed/*
+!data/processed/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
+# Local operating-system/editor files
+.DS_Store
+Thumbs.db
+
