@@ -16,7 +16,26 @@ This team project performs reservoir history matching to select 10 production fo
 | `docs/` | Current competition guide, master plan, and role handover documents. |
 | `EXCEL_DATA_GUIDE.md` | Description of every supplied workbook. |
 
-## Quick start (Windows PowerShell)
+## Submission ZIP contents
+
+The final source-code ZIP must include the deployment model as well as the code needed to load it:
+
+```text
+README.md
+RUNBOOK.md
+requirements.txt
+requirements-ml.txt
+src/
+tests/
+docs/
+models/
+  person2_production_proxy.joblib
+  person2_production_proxy_metadata.json
+```
+
+Do not include `TestCases/`, `.venv/`, Python cache files, generated `data/processed/`, `outputs/`, or experimental models. The organizer supplies the original workbooks separately. The selected model is approximately 106 MB, so it is excluded from GitHub because of GitHub's 100 MB file limit, but it **must** be included in the submission ZIP.
+
+## Full reproducibility (Windows PowerShell)
 
 ```powershell
 python -m venv .venv
@@ -27,6 +46,21 @@ python src\person1_data_pipeline.py
 python src\person1_data_pipeline.py --with-grid-features
 python -m pip install -r requirements-ml.txt
 python src\person2_ml_proxy.py
+python src\person3_curve_history_ranking.py
+python src\person3_history_optimization.py
+python src\person4_forecast_backtest.py
+python src\person4_forecast_integration.py
+python -m pytest -q
+```
+
+This sequence rebuilds the Person 1 inputs, retrains the selected proxy, runs the history matching and forecast steps, exports a new provisional workbook, then runs the automated tests.
+
+## Run with the supplied trained model
+
+When the submission ZIP contains `models/person2_production_proxy.joblib`, skip Person 2 retraining and use the saved model directly:
+
+```powershell
+python src\person1_data_pipeline.py --with-grid-features
 python src\person3_curve_history_ranking.py
 python src\person3_history_optimization.py
 python src\person4_forecast_backtest.py
@@ -58,6 +92,15 @@ The full pipeline reads the original Excel workbooks and creates clean tables, a
 - `outputs/person4_delivery/Template Deliverable - provisional forecast.xlsx`
 
 The current export is `outputs/person4_delivery/Template Deliverable - provisional forecast.xlsx`. It is excluded from Git with all generated outputs. It uses the saved Person 2 proxy only for historical contract validation because that artifact is deliberately restricted to 1998-2008; a back-tested rate extrapolation produces the 2008-2028 benchmark. It must be replaced only after the team approves the shortlist and forecast assumptions.
+
+## Model, reproducibility, and limitations
+
+- Selected model: parameter-only Extra Trees regressor. Validation NRMSE is `0.006113`; held-out test NRMSE is `0.008145`.
+- Person 2 uses fixed case splits: cases 1-70 for training, 71-85 for validation, and 86-100 for test evaluation.
+- Person 3 uses Differential Evolution with seed 42. Its optimized parameter set is saved in `person3_optimized_parameters.csv`.
+- The Person 2 proxy predicts oil, gas, and water **rates** only for dates from 1 Jan 1998 to 1 Jan 2008. It deliberately rejects later dates.
+- The 2008-2028 values use a separately back-tested rate extrapolation and trapezoidal cumulative integration anchored at each case's 1 Jan 2008 cumulative production.
+- Future values are modeled projections, not observed ground truth. The final workbook remains provisional until the team approves the extrapolation assumptions.
 
 ## Team workflow
 
