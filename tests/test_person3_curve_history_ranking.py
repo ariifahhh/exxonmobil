@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.stage2_history_matching import calculate_ranking
+from src.person3_curve_history_ranking import calculate_ranking
 
 
 def test_calculate_ranking_prefers_exact_match():

@@ -1,4 +1,4 @@
-from src.stage1_clean_curves import parse_case_header
+from src.person1_data_pipeline import parse_case_header
 
 
 def test_parse_case_header():

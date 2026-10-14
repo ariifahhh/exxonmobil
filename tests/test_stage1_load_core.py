@@ -1,6 +1,6 @@
 import pytest
 
-from src.stage1_load_core import normalise_case_id
+from src.person1_data_pipeline import normalise_case_id
 
 
 @pytest.mark.parametrize("label, expected", [("Case 1", 1), ("Case 100", 100), (" Case 7 ", 7)])

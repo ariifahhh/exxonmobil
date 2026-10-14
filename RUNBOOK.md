@@ -26,7 +26,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 - Source Excel files stay in `TestCases/` and must never be modified.
 - Generated clean data goes in `data/processed/` and is ignored by Git.
 - Charts, reports, and final artefacts go in `outputs/` and are ignored by Git.
-- Reusable Python code goes in `src/`; exploratory work goes in `notebooks/`; tests go in `tests/`.
+- Reusable Python code goes in `src/`; tests go in `tests/`.
 
 ## GitHub team setup
 
@@ -48,28 +48,35 @@ git push -u origin main
 
 Do not stage anything under `TestCases/`, `data/processed/`, `outputs/`, or `.venv/`.
 
-## Current status
+## Person 1 data pipeline
 
-Stage A is ready. Stage B core loading and cleaning:
+Run core loading, production-curve cleaning, and the grid inventory with one command:
 
 ```powershell
-python src/stage1_load_core.py
-pytest
+python src/person1_data_pipeline.py
 ```
 
-This creates `case_uncertainties.csv`, `field_history.csv`, a source inventory, and a cleaning audit in `data/processed/`. It also saves the raw-data visual profile to `outputs/core_data_before_cleaning.png`.
+This creates Person 1-owned files such as `person1_case_uncertainties.csv`, `person1_field_history.csv`, the `person1_case_production_*.csv` tables, audits, and the 100-case grid manifest. It never edits the source workbooks. Linear interpolation applies only within each curve's source-date coverage; missing coverage remains flagged rather than extrapolated.
 
-## Stage B: production curves
-
-Run this only after the core pipeline completes:
+Grid feature extraction reads roughly 9 million cells and can take substantial time. It uses the confirmed `-999.25` sentinel rule and rebuilds the partial feature output:
 
 ```powershell
-python src/stage1_clean_curves.py
+python src/person1_data_pipeline.py --with-grid-features
 python -m pytest -q
 ```
 
-This converts the six simulated production sheets into clean long and quarterly tables. It never edits the source workbook. Linear interpolation applies only within each curve's source-date coverage; missing coverage remains flagged rather than extrapolated.
+## Person 2, Person 3, and Person 4 integration
 
-## Jupyter option
+After the Person 1 grid features have been created, run the reproducible downstream workflow:
 
-Open `notebooks/dataworks_workflow.ipynb` in VS Code, choose the `.venv` Python kernel, and use **Run All**. The single notebook runs Stage 1 and Stage 2, displays the audits, visual checks, and history-match ranking. The `.py` files remain the single source of truth so the same pipeline can also run from the terminal and be reused by the team.
+```powershell
+python -m pip install -r requirements-ml.txt
+python src\person2_ml_proxy.py
+python src\person3_curve_history_ranking.py
+python src\person3_history_optimization.py
+python src\person4_forecast_backtest.py
+python src\person4_forecast_integration.py
+python -m pytest -q
+```
+
+`person4_forecast_integration.py` reloads the Person 2 artifact without retraining and validates the Person 3 parameter contract. It intentionally does not call the Person 2 model beyond 1 Jan 2008; the post-2008 projection uses the best historical back-test configuration. The verified provisional workbook is written to `outputs/person4_delivery/Template Deliverable - provisional forecast.xlsx` while the original template remains unchanged.

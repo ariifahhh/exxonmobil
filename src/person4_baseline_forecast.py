@@ -1,4 +1,4 @@
-"""Create a transparent 2008-2028 forecast benchmark for selected history matches."""
+"""Person 4: create a transparent 2008-2028 forecast benchmark."""
 
 from __future__ import annotations
 
@@ -151,13 +151,13 @@ def plot_forecast_ensemble(forecasts: pd.DataFrame, output_path: Path) -> None:
 
 def run(input_dir: Path, processed_dir: Path, output_dir: Path, top_n: int = 10) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Generate a baseline forecast for the top history-matched cases."""
-    ranking = pd.read_csv(processed_dir / "case_history_match_ranking.csv")
-    curves = pd.read_csv(processed_dir / "case_production_quarterly.csv", parse_dates=["date"])
+    ranking = pd.read_csv(processed_dir / "person3_curve_history_ranking.csv")
+    curves = pd.read_csv(processed_dir / "person1_case_production_quarterly.csv", parse_dates=["date"])
     template = pd.read_excel(input_dir / "09 Template Deliverable.xlsx", sheet_name="Case 1", usecols="A", engine="openpyxl")
     forecast_dates = pd.DatetimeIndex(pd.to_datetime(template.iloc[:, 0], errors="raise"))
     selected = ranking.head(top_n).copy()
     config = DEFAULT_FORECAST_CONFIG.copy()
-    backtest_summary_path = processed_dir / "forecast_backtest_summary.csv"
+    backtest_summary_path = processed_dir / "person4_forecast_backtest_summary.csv"
     if backtest_summary_path.exists():
         backtest_summary = pd.read_csv(backtest_summary_path).sort_values("weighted_nrmse")
         selected_config = backtest_summary.iloc[0]
@@ -178,10 +178,10 @@ def run(input_dir: Path, processed_dir: Path, output_dir: Path, top_n: int = 10)
     forecast_output = pd.concat(forecasts, ignore_index=True)
     parameter_output = pd.DataFrame(parameters)
     audit = validate_forecasts(forecast_output)
-    forecast_output.to_csv(processed_dir / "case_forecast_baseline_long.csv", index=False, date_format="%Y-%m-%d")
-    parameter_output.to_csv(processed_dir / "baseline_forecast_parameters.csv", index=False)
-    audit.to_csv(processed_dir / "baseline_forecast_audit.csv", index=False)
-    plot_forecast_ensemble(forecast_output, output_dir / "baseline_forecast_ensemble.png")
+    forecast_output.to_csv(processed_dir / "person4_case_forecast_baseline_long.csv", index=False, date_format="%Y-%m-%d")
+    parameter_output.to_csv(processed_dir / "person4_baseline_forecast_parameters.csv", index=False)
+    audit.to_csv(processed_dir / "person4_baseline_forecast_audit.csv", index=False)
+    plot_forecast_ensemble(forecast_output, output_dir / "person4_baseline_forecast_ensemble.png")
     return forecast_output, parameter_output, audit
 
 

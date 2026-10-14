@@ -1,4 +1,4 @@
-"""Back-test simple forecast assumptions before projecting the unknown future."""
+"""Person 4: back-test forecast assumptions before extrapolating future production."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from src.stage3_baseline_forecast import DEFAULT_FORECAST_CONFIG, forecast_case
+from src.person4_baseline_forecast import DEFAULT_FORECAST_CONFIG, forecast_case
 BACKTEST_CUTOFF = pd.Timestamp("2004-01-01")
 FLUID_WEIGHTS = {"oil": 0.40, "gas": 0.35, "water": 0.25}
 
@@ -36,7 +36,7 @@ def normalized_rmse(actual: pd.Series, predicted: pd.Series) -> float:
 
 def run_backtest(processed_dir: Path, output_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Hide 2004-2008 case data and compare simple forecast configurations."""
-    curves = pd.read_csv(processed_dir / "case_production_quarterly.csv", parse_dates=["date"])
+    curves = pd.read_csv(processed_dir / "person1_case_production_quarterly.csv", parse_dates=["date"])
     actual = curves.loc[(curves["date"] > BACKTEST_CUTOFF) & (curves["date"] <= pd.Timestamp("2008-01-01"))]
     forecast_dates = pd.DatetimeIndex(sorted(actual["date"].unique()))
     rows: list[dict[str, object]] = []
@@ -65,9 +65,9 @@ def run_backtest(processed_dir: Path, output_dir: Path) -> tuple[pd.DataFrame, p
     config_table = pd.DataFrame(CANDIDATE_CONFIGS).rename(columns={"name": "config"})
     summary = summary.merge(config_table, on="config", how="left").sort_values("weighted_nrmse").reset_index(drop=True)
 
-    results.to_csv(processed_dir / "forecast_backtest_results.csv", index=False)
-    summary.to_csv(processed_dir / "forecast_backtest_summary.csv", index=False)
-    plot_backtest(summary, output_dir / "forecast_backtest_comparison.png")
+    results.to_csv(processed_dir / "person4_forecast_backtest_results.csv", index=False)
+    summary.to_csv(processed_dir / "person4_forecast_backtest_summary.csv", index=False)
+    plot_backtest(summary, output_dir / "person4_forecast_backtest_comparison.png")
     return results, summary
 
 

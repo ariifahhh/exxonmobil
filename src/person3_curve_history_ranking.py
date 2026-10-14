@@ -1,4 +1,4 @@
-"""Rank reservoir realizations by how closely their rates match field history."""
+"""Person 3: rank reservoir realizations by their field-history match."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ def make_observed_long(field_history: pd.DataFrame) -> pd.DataFrame:
     """Convert observed field-rate columns into date, fluid, observed_rate rows."""
     missing = set(FIELD_RATE_COLUMNS).difference(field_history.columns)
     if missing:
-        raise ValueError(f"field_history.csv is missing columns: {sorted(missing)}")
+        raise ValueError(f"person1_field_history.csv is missing columns: {sorted(missing)}")
     observed = field_history.melt(
         id_vars="date",
         value_vars=list(FIELD_RATE_COLUMNS),
@@ -97,18 +97,18 @@ def plot_top_matches(field_history: pd.DataFrame, case_quarterly: pd.DataFrame, 
 
 def run(processed_dir: Path, output_dir: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Run the baseline history-match ranking and save handover outputs."""
-    field_path = processed_dir / "field_history.csv"
-    curves_path = processed_dir / "case_production_quarterly.csv"
+    field_path = processed_dir / "person1_field_history.csv"
+    curves_path = processed_dir / "person1_case_production_quarterly.csv"
     if not field_path.exists() or not curves_path.exists():
-        raise FileNotFoundError("Run both Stage 1 scripts before history matching.")
+        raise FileNotFoundError("Run src/person1_data_pipeline.py before history matching.")
 
     field_history = pd.read_csv(field_path, parse_dates=["date"])
     case_quarterly = pd.read_csv(curves_path, parse_dates=["date"])
     ranking, components = calculate_ranking(field_history, case_quarterly)
 
-    ranking.to_csv(processed_dir / "case_history_match_ranking.csv", index=False)
-    components.to_csv(processed_dir / "case_history_match_components.csv", index=False)
-    plot_top_matches(field_history, case_quarterly, ranking, output_dir / "top_history_matches.png")
+    ranking.to_csv(processed_dir / "person3_curve_history_ranking.csv", index=False)
+    components.to_csv(processed_dir / "person3_curve_history_components.csv", index=False)
+    plot_top_matches(field_history, case_quarterly, ranking, output_dir / "person3_top_history_matches.png")
     return ranking, components
 
 
@@ -123,4 +123,4 @@ if __name__ == "__main__":
     args = parse_args()
     result, _ = run(args.processed_dir, args.output_dir)
     print(result.head(10).to_string(index=False))
-    print("\nCompleted. Review data/processed/case_history_match_ranking.csv")
+    print("\nCompleted. Review data/processed/person3_curve_history_ranking.csv")

@@ -13,6 +13,7 @@ data/processed/*
 !data/processed/.gitkeep
 outputs/*
 !outputs/.gitkeep
+models/
 
 # Local operating-system/editor files
 .DS_Store

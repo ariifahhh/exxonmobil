@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.stage3_baseline_forecast import annual_decline_rate, forecast_case
+from src.person4_baseline_forecast import annual_decline_rate, forecast_case
 
 
 def test_annual_decline_rate_is_positive_and_bounded():
